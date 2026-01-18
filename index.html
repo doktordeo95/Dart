@@ -19,7 +19,9 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 
 .setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .setup-grid.three{grid-template-columns:repeat(3,1fr)}
-.setup-full{grid-column:1/-1}
+
+.toggle{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:#ccc}
+.toggle input{width:auto}
 
 /* GAME */
 .match-info{display:flex;gap:14px;font-size:12px}
@@ -44,13 +46,17 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .actions button{padding:14px;font-weight:800;border-radius:6px;border:none}
 .clear{background:#dc3545;color:#fff}
 .submit{background:#00ff88;color:#000}
-.banner{background:#00ff88;color:#000;text-align:center;padding:8px;font-weight:800;display:none}
-.banner.active{display:block}
-.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center}
+
+/* WIN MODAL */
+.modal{position:fixed;inset:0;background:linear-gradient(180deg,#00ff88,#0f5132);display:none;align-items:center;justify-content:center;color:#000}
 .modal.active{display:flex}
-.modal-content{background:#242424;padding:20px;border-radius:10px;width:90%;max-width:400px}
-.modal-content h2{color:#00ff88;font-size:16px;margin-bottom:12px}
-.modal-content p{font-size:13px;margin:6px 0}
+.modal-content{background:#fff;border-radius:16px;padding:22px;width:90%;max-width:420px;text-align:center}
+.modal-content h2{font-size:20px;margin-bottom:10px}
+.modal-content .winner{font-size:26px;font-weight:900;color:#00aa55;margin-bottom:14px}
+.modal-content .stat{font-size:14px;margin:6px 0}
+.modal-content button{margin-top:14px;width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer}
+.modal-content .again{background:#00ff88}
+.modal-content .exit{background:#242424;color:#fff;margin-top:8px}
 </style></head>
 <body><!-- SETUP --><div class="screen active" id="setup">
   <div class="header"><strong>🎯 Darts Score Counter</strong></div>
@@ -84,9 +90,10 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
       <select id="startPlayer"></select>
     </div>
   </div>
-  <label style="margin-top:10px">
-    <input type="checkbox" id="alternateStart" checked /> Växla start per leg
-  </label>
+  <div class="toggle">
+    <input type="checkbox" id="alternateStart" checked />
+    <label for="alternateStart">Växla startspelare varje leg</label>
+  </div>
 </div>
 
 <div class="setup-card">
@@ -109,7 +116,6 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
       <div>Först till <strong id="setsTarget"></strong> sets</div>
     </div>
   </div>
-  <div class="banner" id="banner"></div>
   <div class="players" id="players"></div>
   <div class="input">
     <div class="display" id="display">0</div>
@@ -124,23 +130,47 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
       <button class="submit" onclick="submit()">OK</button>
     </div>
   </div>
-</div><div class="modal" id="statsModal"><div class="modal-content" id="statsContent"></div></div><script>
-const CHECKOUTS={double:{170:'T20 T20 Bull',167:'T20 T19 Bull',164:'T20 T18 Bull',161:'T20 T17 Bull',160:'T20 T20 D20',158:'T20 T20 D19',156:'T20 T20 D18',154:'T20 T18 D20',152:'T20 T20 D16',150:'T20 T18 D18',148:'T20 T20 D14',146:'T20 T18 D16',144:'T20 T20 D12',142:'T20 T14 D20',140:'T20 T20 D10',138:'T20 T18 D12',136:'T20 T20 D8',134:'T20 T14 D16',132:'T20 T16 D12',130:'T20 T20 D5',128:'T18 T14 D16',126:'T19 T19 D6',124:'T20 T16 D8',122:'T18 T18 D7',120:'T20 20 D20',118:'T20 18 D20',116:'T20 16 D20',114:'T20 14 D20',112:'T20 12 D20',110:'T20 10 D20',108:'T20 8 D20',106:'T20 6 D20',104:'T18 18 D16',102:'T20 10 D16',100:'T20 D20'},any:{},triple:{}};
+</div><!-- WIN MODAL --><div class="modal" id="winModal">
+  <div class="modal-content" id="winContent"></div>
+</div><script>
+const CHECKOUTS={double:{170:'T20 T20 Bull',160:'T20 T20 D20',100:'T20 D20'},any:{},triple:{}};
 let state;
+
 function renderPlayerInputs(){playerInputs.innerHTML='';startPlayer.innerHTML='';for(let i=1;i<=numPlayers.value;i++){playerInputs.innerHTML+=`<label>Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;startPlayer.innerHTML+=`<option value="${i-1}">Spelare ${i}</option>`}}
-function startGame(){state={start:+mode.value,finish:finish.value,legsToWin:+legsToWin.value,setsToWin:+setsToWin.value,leg:1,set:1,current:+startPlayer.value,alternate:alternateStart.checked,input:'',finished:false,players:Array.from({length:+numPlayers.value},(_,i)=>({name:document.getElementById(`p${i+1}`).value,score:+mode.value,legs:0,sets:0,rounds:[],setRounds:[],highest:0}))};save();setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}
+
+function startGame(){state={start:+mode.value,finish:finish.value,legsToWin:+legsToWin.value,setsToWin:+setsToWin.value,leg:1,set:1,startIndex:+startPlayer.value,current:+startPlayer.value,alternate:alternateStart.checked,input:'',finished:false,players:Array.from({length:+numPlayers.value},(_,i)=>({name:document.getElementById(`p${i+1}`).value,score:+mode.value,legs:0,sets:0,rounds:[],setRounds:[],highest:0}))};save();setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}
+
 function save(){localStorage.setItem('dartsState',JSON.stringify(state))}
 function load(){const s=localStorage.getItem('dartsState');if(s){state=JSON.parse(s);setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}}
 function resetAll(){localStorage.removeItem('dartsState');location.reload()}
 function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0}
+
 function render(){leg.textContent=state.leg;set.textContent=state.set;players.innerHTML='';state.players.forEach((p,i)=>{const co=CHECKOUTS[state.finish]?.[p.score];players.innerHTML+=`<div class="player ${i===state.current&&!state.finished?'active':'inactive'}"><div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div><div class="score">${p.score}</div><div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>${co?`<div class="checkout">Checkout: ${co}</div>`:''}</div>`})}
+
 function num(n){if(state.finished)return;state.input=(state.input+n).slice(0,3);display.textContent=state.input}
 function back(){state.input=state.input.slice(0,-1);display.textContent=state.input||'0'}
 function clearInput(){state.input='';display.textContent='0'}
 function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
-function submit(){const v=+state.input;if(!v||v>180)return;const p=state.players[state.current];if(p.score-v<0){next();return}if(p.score-v===0&&!validFinish(v))return;p.score-=v;p.rounds.push(v);p.setRounds.push(v);p.highest=Math.max(p.highest,v);if(p.score===0){p.legs++;state.players.forEach(pl=>pl.score=state.start);state.leg++;if(state.alternate)state.current=(state.current+1)%state.players.length;if(p.legs>=state.legsToWin){p.sets++;state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});state.set++;if(p.sets>=state.setsToWin){state.finished=true;showStats();return}}}next()}
+
+function submit(){const v=+state.input;if(!v||v>180)return;const p=state.players[state.current];if(p.score-v<0){next();return}if(p.score-v===0&&!validFinish(v))return;p.score-=v;p.rounds.push(v);p.setRounds.push(v);p.highest=Math.max(p.highest,v);
+
+if(p.score===0){p.legs++;state.leg++;state.players.forEach(pl=>pl.score=state.start);
+
+// korrekt startlogik: startspelare roterar oberoende av vinnare
+if(state.alternate){state.startIndex=(state.startIndex+1)%state.players.length;}
+state.current=state.startIndex;
+
+if(p.legs>=state.legsToWin){p.sets++;state.set++;state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});
+if(p.sets>=state.setsToWin){state.finished=true;showWin(p);return}}
+}
+next()}
+
 function next(){state.current=(state.current+1)%state.players.length;clearInput();save();render()}
-function showStats(){let html='<h2>Matchstatistik</h2>';state.players.forEach(p=>{html+=`<p><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</p>`});statsContent.innerHTML=html;statsModal.classList.add('active');localStorage.removeItem('dartsState')}
+
+function showWin(winner){let html=`<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;state.players.forEach(p=>{html+=`<div class="stat"><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</div>`});html+=`<button class="again" onclick="playAgain()">Spela igen</button><button class="exit" onclick="resetAll()">Ny match</button>`;winContent.innerHTML=html;winModal.classList.add('active');localStorage.removeItem('dartsState')}
+
+function playAgain(){winModal.classList.remove('active');state.players.forEach(p=>{p.score=state.start;p.legs=0;p.sets=0;p.rounds=[];p.setRounds=[];p.highest=0});state.leg=1;state.set=1;state.finished=false;state.current=state.startIndex;save();render()}
+
 renderPlayerInputs();load();
 </script></body>
 </html>
