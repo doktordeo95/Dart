@@ -3,241 +3,87 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Darts Score Counter</title><style>
-* { box-sizing: border-box; margin: 0; padding: 0; }
-
-body {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #1a1a1a;
-  color: #fff;
-  height: 100vh;
-  overflow: hidden;
-}
-
-/* ---------- SHARED ---------- */
-.screen { height: 100vh; display: none; flex-direction: column; }
-.screen.active { display: flex; }
-
-.header {
-  background: #242424;
-  padding: 10px 16px;
-  border-bottom: 1px solid #333;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header strong { font-size: 14px; }
-
-/* ---------- SETUP ---------- */
-.setup {
-  flex: 1;
-  padding: 16px;
-  overflow-y: auto;
-}
-
-.setup-card {
-  background: #242424;
-  border: 1px solid #333;
-  border-radius: 10px;
-  padding: 14px;
-  margin-bottom: 14px;
-}
-
-.setup-card h3 {
-  font-size: 12px;
-  color: #00ff88;
-  margin-bottom: 8px;
-  text-transform: uppercase;
-}
-
-.setup label {
-  font-size: 12px;
-  color: #ccc;
-  margin-top: 8px;
-  display: block;
-}
-
-.setup input, .setup select {
-  width: 100%;
-  padding: 10px;
-  margin-top: 4px;
-  background: #1a1a1a;
-  border: 1px solid #333;
-  color: #fff;
-  border-radius: 6px;
-}
-
-/* ---------- GAME ---------- */
-.match-info { display: flex; gap: 14px; font-size: 12px; }
-.match-info strong { color: #00ff88; }
-
-.players { flex: 1; display: flex; flex-direction: column; }
-
-.player {
-  flex: 1;
-  padding: 10px 14px;
-  background: #242424;
-  border-bottom: 1px solid #1a1a1a;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.player.active {
-  background: #2b2b2b;
-  border-left: 4px solid #00ff88;
-}
-
-.player.inactive { opacity: 0.45; }
-
-.player-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-}
-
-.record { display: flex; gap: 10px; font-size: 11px; color: #ccc; }
-
-.score {
-  text-align: center;
-  font-size: 56px;
-  font-weight: 900;
-  line-height: 1;
-  margin: 4px 0;
-}
-
-.player.active .score { color: #00ff88; }
-
-.stats {
-  display: flex;
-  justify-content: center;
-  gap: 16px;
-  font-size: 11px;
-  color: #aaa;
-}
-
-.checkout {
-  text-align: center;
-  font-size: 11px;
-  color: #ffc107;
-  margin-top: 4px;
-}
-
-/* ---------- INPUT ---------- */
-.input {
-  background: #1a1a1a;
-  border-top: 2px solid #00ff88;
-  padding: 12px;
-}
-
-.display {
-  background: #242424;
-  border: 2px solid #333;
-  border-radius: 8px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 32px;
-  font-weight: 900;
-  color: #00ff88;
-  margin-bottom: 8px;
-}
-
-.pad {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
-  padding-bottom: 80px; /* space for sticky actions */
-}
-
-.pad button {
-  padding: 14px;
-  font-size: 18px;
-  font-weight: 700;
-  background: #242424;
-  color: #fff;
-  border: 1px solid #333;
-  border-radius: 6px;
-}
-
-.pad button.zero { grid-column: span 2; }
-
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 8px;
-  position: sticky;
-  bottom: 0;
-  background: #1a1a1a;
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-.actions button {
-  padding: 14px;
-  font-weight: 800;
-  border-radius: 6px;
-  border: none;
-}
-
-.clear { background: #dc3545; color: #fff; }
-.submit { background: #00ff88; color: #000; }
-
-.banner {
-  background: #00ff88;
-  color: #000;
-  text-align: center;
-  padding: 8px;
-  font-weight: 800;
-  display: none;
-}
-.banner.active { display: block; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;height:100vh;overflow:hidden}
+.screen{height:100vh;display:none;flex-direction:column}
+.screen.active{display:flex}
+.header{background:#242424;padding:10px 16px;border-bottom:1px solid #333;display:flex;justify-content:space-between;align-items:center}
+.header strong{font-size:14px}
+.setup{flex:1;padding:16px;overflow-y:auto}
+.setup-card{background:#242424;border:1px solid #333;border-radius:10px;padding:14px;margin-bottom:14px}
+.setup-card h3{font-size:12px;color:#00ff88;margin-bottom:8px;text-transform:uppercase}
+.setup label{font-size:12px;color:#ccc;margin-top:8px;display:block}
+.setup input,.setup select{width:100%;padding:10px;margin-top:4px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px}
+.match-info{display:flex;gap:14px;font-size:12px}
+.match-info strong{color:#00ff88}
+.players{flex:1;display:flex;flex-direction:column}
+.player{flex:1;padding:10px 14px;background:#242424;border-bottom:1px solid #1a1a1a;display:flex;flex-direction:column;justify-content:center}
+.player.active{background:#2b2b2b;border-left:4px solid #00ff88}
+.player.inactive{opacity:.45}
+.player-header{display:flex;justify-content:space-between;font-size:12px}
+.record{display:flex;gap:10px;font-size:11px;color:#ccc}
+.score{text-align:center;font-size:56px;font-weight:900;line-height:1;margin:4px 0}
+.player.active .score{color:#00ff88}
+.stats{display:flex;justify-content:center;gap:16px;font-size:11px;color:#aaa}
+.checkout{text-align:center;font-size:11px;color:#ffc107;margin-top:4px}
+.input{background:#1a1a1a;border-top:2px solid #00ff88;padding:12px}
+.display{background:#242424;border:2px solid #333;border-radius:8px;height:56px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#00ff88;margin-bottom:8px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:80px}
+.pad button{padding:14px;font-size:18px;font-weight:700;background:#242424;color:#fff;border:1px solid #333;border-radius:6px}
+.pad button.zero{grid-column:span 2}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;position:sticky;bottom:0;background:#1a1a1a;padding-bottom:env(safe-area-inset-bottom)}
+.actions button{padding:14px;font-weight:800;border-radius:6px;border:none}
+.clear{background:#dc3545;color:#fff}
+.submit{background:#00ff88;color:#000}
+.banner{background:#00ff88;color:#000;text-align:center;padding:8px;font-weight:800;display:none}
+.banner.active{display:block}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.8);display:none;align-items:center;justify-content:center}
+.modal.active{display:flex}
+.modal-content{background:#242424;padding:20px;border-radius:10px;width:90%;max-width:400px}
+.modal-content h2{color:#00ff88;font-size:16px;margin-bottom:12px}
+.modal-content p{font-size:13px;margin:6px 0}
 </style></head>
-<body><!-- SETUP SCREEN --><div class="screen active" id="setup">
+<body><div class="screen active" id="setup">
   <div class="header"><strong>🎯 Darts Score Counter</strong></div>
-  <div class="setup"><div class="setup-card">
-  <h3>Spel</h3>
-  <label>Startpoäng</label>
-  <select id="mode"><option value="501">501</option><option value="301">301</option></select>
-
-  <label>Utgång</label>
-  <select id="finish">
-    <option value="any">Valfri</option>
-    <option value="double">Dubbel</option>
-    <option value="triple">Trippel</option>
-  </select>
-</div>
-
-<div class="setup-card">
-  <h3>Matchformat</h3>
-  <label>Legs för att vinna set</label>
-  <input id="legsToWin" type="number" value="3" />
-  <label>Sets för att vinna match</label>
-  <input id="setsToWin" type="number" value="2" />
-</div>
-
-<div class="setup-card">
-  <h3>Spelare</h3>
-  <label>Antal spelare</label>
-  <select id="numPlayers" onchange="renderPlayerInputs()"><option>2</option><option>3</option><option>4</option></select>
-  <div id="playerInputs"></div>
-</div>
-
-<button class="submit" style="width:100%;" onclick="startGame()">Starta match</button>
-
+  <div class="setup">
+    <div class="setup-card">
+      <h3>Spel</h3>
+      <label>Startpoäng</label>
+      <select id="mode"><option value="501">501</option><option value="301">301</option></select>
+      <label>Utgång</label>
+      <select id="finish"><option value="any">Valfri</option><option value="double">Dubbel</option><option value="triple">Trippel</option></select>
+    </div>
+    <div class="setup-card">
+      <h3>Matchformat</h3>
+      <label>Legs för att vinna set</label>
+      <input id="legsToWin" type="number" value="3" />
+      <label>Sets för att vinna match</label>
+      <input id="setsToWin" type="number" value="2" />
+      <label>Startspelare</label>
+      <select id="startPlayer"></select>
+      <label><input type="checkbox" id="alternateStart" checked /> Växla start per leg</label>
+    </div>
+    <div class="setup-card">
+      <h3>Spelare</h3>
+      <label>Antal spelare</label>
+      <select id="numPlayers" onchange="renderPlayerInputs()"><option>2</option><option>3</option><option>4</option></select>
+      <div id="playerInputs"></div>
+    </div>
+    <button class="submit" style="width:100%" onclick="startGame()">Starta match</button>
   </div>
-</div><!-- GAME SCREEN --><div class="screen" id="game">
+</div><div class="screen" id="game">
   <div class="header">
-    <button onclick="location.reload()">←</button>
+    <button onclick="resetAll()">←</button>
     <div class="match-info">
       <div>Leg <strong id="leg">1</strong></div>
       <div>Set <strong id="set">1</strong></div>
       <div>Först till <strong id="legsTarget"></strong> legs</div>
       <div>Först till <strong id="setsTarget"></strong> sets</div>
     </div>
-  </div>  <div class="banner" id="banner"></div>
-  <div class="players" id="players"></div>  <div class="input" id="inputArea">
+  </div>
+  <div class="banner" id="banner"></div>
+  <div class="players" id="players"></div>
+  <div class="input" id="inputArea">
     <div class="display" id="display">0</div>
     <div class="pad">
       <button onclick="num(1)">1</button><button onclick="num(2)">2</button><button onclick="num(3)">3</button>
@@ -250,93 +96,26 @@ body {
       <button class="submit" onclick="submit()">OK</button>
     </div>
   </div>
+</div><div class="modal" id="statsModal">
+  <div class="modal-content" id="statsContent"></div>
 </div><script>
-const CHECKOUTS = {
-  any: { 40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1' },
-  double: { 40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1' },
-  triple: { 60:'T20',57:'T19',54:'T18' }
-};
-
+const FULL_CHECKOUTS={double:{170:'T20 T20 Bull',167:'T20 T19 Bull',164:'T20 T18 Bull',161:'T20 T17 Bull',160:'T20 T20 D20',158:'T20 T20 D19',156:'T20 T20 D18',154:'T20 T18 D20',152:'T20 T20 D16',150:'T20 T18 D18',148:'T20 T20 D14',146:'T20 T18 D16',144:'T20 T20 D12',142:'T20 T14 D20',140:'T20 T20 D10',138:'T20 T18 D12',136:'T20 T20 D8',134:'T20 T14 D16',132:'T20 T16 D12',130:'T20 T20 D5',128:'T18 T14 D16',126:'T19 T19 D6',124:'T20 T16 D8',122:'T18 T18 D7',120:'T20 20 D20',118:'T20 18 D20',116:'T20 16 D20',114:'T20 14 D20',112:'T20 12 D20',110:'T20 10 D20',108:'T20 8 D20',106:'T20 6 D20',104:'T18 18 D16',102:'T20 10 D16',100:'T20 D20'},any:{},triple:{}};
 let state;
-
-function renderPlayerInputs(){
-  playerInputs.innerHTML='';
-  for(let i=1;i<=numPlayers.value;i++){
-    playerInputs.innerHTML+=`<label>Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;
-  }
-}
-
-function startGame(){
-  state={
-    start:+mode.value,
-    finish:finish.value,
-    legsToWin:+legsToWin.value,
-    setsToWin:+setsToWin.value,
-    leg:1,set:1,current:0,input:'',finished:false,
-    players:Array.from({length:+numPlayers.value},(_,i)=>({
-      name:document.getElementById(`p${i+1}`).value,
-      score:+mode.value,legs:0,sets:0,rounds:[],setRounds:[]
-    }))
-  };
-  setup.classList.remove('active');
-  game.classList.add('active');
-  legsTarget.textContent=state.legsToWin;
-  setsTarget.textContent=state.setsToWin;
-  render();
-}
-
-function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0;}
-function showBanner(t){banner.textContent=t;banner.classList.add('active');setTimeout(()=>banner.classList.remove('active'),1500);}
-
-function render(){
-  leg.textContent=state.leg; set.textContent=state.set;
-  players.innerHTML='';
-  state.players.forEach((p,i)=>{
-    const checkout = CHECKOUTS[state.finish][p.score];
-    players.innerHTML+=`
-      <div class="player ${i===state.current?'active':'inactive'}">
-        <div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div>
-        <div class="score">${p.score}</div>
-        <div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>
-        ${checkout?`<div class="checkout">Checkout: ${checkout}</div>`:''}
-      </div>`;
-  });
-}
-
-function num(n){ if(state.finished) return; state.input=(state.input+n).slice(0,3); display.textContent=state.input; }
-function back(){ state.input=state.input.slice(0,-1); display.textContent=state.input||'0'; }
-function clearInput(){ state.input=''; display.textContent='0'; }
-
-function validFinish(score){
-  if(state.finish==='any') return true;
-  if(state.finish==='double') return score%2===0;
-  if(state.finish==='triple') return score%3===0;
-}
-
-function submit(){
-  const v=+state.input; if(!v||v>180) return;
-  const p=state.players[state.current];
-  if(p.score-v<0){ state.current=(state.current+1)%state.players.length; clearInput(); render(); return; }
-  if(p.score-v===0 && !validFinish(v)) return;
-
-  p.score-=v; p.rounds.push(v); p.setRounds.push(v);
-
-  if(p.score===0){
-    p.legs++; showBanner(`${p.name} vinner leg`);
-    state.players.forEach(pl=>pl.score=state.start);
-    state.leg++;
-    if(p.legs>=state.legsToWin){
-      p.sets++; showBanner(`${p.name} vinner set`);
-      state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});
-      state.set++;
-      if(p.sets>=state.setsToWin){ showBanner(`${p.name} vinner match`); state.finished=true; }
-    }
-  }
-
-  state.current=(state.current+1)%state.players.length;
-  clearInput(); render();
-}
-
-renderPlayerInputs();
+function renderPlayerInputs(){playerInputs.innerHTML='';startPlayer.innerHTML='';for(let i=1;i<=numPlayers.value;i++){playerInputs.innerHTML+=`<label>Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;startPlayer.innerHTML+=`<option value="${i-1}">Spelare ${i}</option>`}}
+function startGame(){state={start:+mode.value,finish:finish.value,legsToWin:+legsToWin.value,setsToWin:+setsToWin.value,leg:1,set:1,current:+startPlayer.value,alternate:alternateStart.checked,input:'',finished:false,players:Array.from({length:+numPlayers.value},(_,i)=>({name:document.getElementById(`p${i+1}`).value,score:+mode.value,legs:0,sets:0,rounds:[],setRounds:[],highest:0}))};saveState();setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}
+function saveState(){localStorage.setItem('dartsState',JSON.stringify(state))}
+function loadState(){const s=localStorage.getItem('dartsState');if(s){state=JSON.parse(s);setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}}
+function resetAll(){localStorage.removeItem('dartsState');location.reload()}
+function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0}
+function showBanner(t){banner.textContent=t;banner.classList.add('active');setTimeout(()=>banner.classList.remove('active'),1500)}
+function render(){leg.textContent=state.leg;set.textContent=state.set;players.innerHTML='';state.players.forEach((p,i)=>{const co=FULL_CHECKOUTS[state.finish]?.[p.score];players.innerHTML+=`<div class="player ${i===state.current&&!state.finished?'active':'inactive'}"><div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div><div class="score">${p.score}</div><div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>${co?`<div class="checkout">Checkout: ${co}</div>`:''}</div>`})}
+function num(n){if(state.finished)return;state.input=(state.input+n).slice(0,3);display.textContent=state.input}
+function back(){state.input=state.input.slice(0,-1);display.textContent=state.input||'0'}
+function clearInput(){state.input='';display.textContent='0'}
+function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
+function submit(){const v=+state.input;if(!v||v>180)return;const p=state.players[state.current];if(p.score-v<0){nextTurn();return}if(p.score-v===0&&!validFinish(v))return;p.score-=v;p.rounds.push(v);p.setRounds.push(v);p.highest=Math.max(p.highest,v);if(p.score===0){p.legs++;showBanner(`${p.name} vinner leg`);state.players.forEach(pl=>pl.score=state.start);state.leg++;if(state.alternate)state.current=(state.current+1)%state.players.length;if(p.legs>=state.legsToWin){p.sets++;showBanner(`${p.name} vinner set`);state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});state.set++;if(p.sets>=state.setsToWin){state.finished=true;showStats();return}}}nextTurn()}
+function nextTurn(){state.current=(state.current+1)%state.players.length;clearInput();saveState();render()}
+function showStats(){const m=document.getElementById('statsModal');let html='<h2>Matchstatistik</h2>';state.players.forEach(p=>{html+=`<p><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</p>`});statsContent.innerHTML=html;statsModal.classList.add('active');localStorage.removeItem('dartsState')}
+renderPlayerInputs();loadState();
 </script></body>
 </html>
