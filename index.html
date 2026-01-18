@@ -198,37 +198,73 @@ function back(){state.input=state.input.slice(0,-1);display.textContent=state.in
 function clearInput(){state.input='';display.textContent='0'}
 function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
 
-function submit(){
-  const v=+state.input;
-  if(!v||v>180)return;
-  const p=state.players[state.current];
-  if(p.score-v<0){next();return}
-  if(p.score-v===0&&!validFinish(v))return;
-  p.score-=v;
+function submit() {
+  const v = +state.input;
+  if (!v || v > 180) return;
+
+  const p = state.players[state.current];
+
+  if (p.score - v < 0) {
+    next();
+    return;
+  }
+
+  if (p.score - v === 0 && !validFinish(v)) {
+    return;
+  }
+
+  p.score -= v;
   p.rounds.push(v);
   p.setRounds.push(v);
-  p.highest=Math.max(p.highest,v);
+  p.highest = Math.max(p.highest, v);
 
-  if(p.score===0){
+  if (p.score === 0) {
+    // LEG WON
     p.legs++;
-    state.players.forEach(pl=>pl.score=state.start);
 
-    if(state.alternate){state.startIndex=(state.startIndex+1)%state.players.length}
-    state.current=state.startIndex;
+    // reset scores for new leg
+    state.players.forEach(pl => pl.score = state.start);
+
+    // rotate start player ONCE
+    if (state.alternate) {
+      state.startIndex = (state.startIndex + 1) % state.players.length;
+    }
+
+    // set current player to new start player
+    state.current = state.startIndex;
+
+    // advance leg counter
     state.leg++;
 
-    if(p.legs>=state.legsToWin){
+    // check set win
+    if (p.legs >= state.legsToWin) {
       p.sets++;
-      state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});
+      state.players.forEach(pl => {
+        pl.legs = 0;
+        pl.setRounds = [];
+      });
       state.set++;
-      state.leg=1;
-      if(p.sets>=state.setsToWin){state.finished=true;showWin(p);return}
+      state.leg = 1;
+
+      // check match win
+      if (p.sets >= state.setsToWin) {
+        state.finished = true;
+        showWin(p);
+        return;
+      }
     }
+
+    clearInput();
+    save();
+    render();
+    return; // IMPORTANT: stop here so next() is NOT called
   }
+
+  // only rotate turn if leg was NOT won
   next();
 }
 
-function next(){state.current=(state.current+1)%state.players.length;clearInput();save();render()}
+function next()(){state.current=(state.current+1)%state.players.length;clearInput();save();render()}
 
 function showWin(winner){
   let html=`<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;
