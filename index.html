@@ -144,7 +144,12 @@ body {
   margin-bottom: 8px;
 }
 
-.pad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.pad {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding-bottom: 80px; /* space for sticky actions */
+}
 
 .pad button {
   padding: 14px;
@@ -247,15 +252,9 @@ body {
   </div>
 </div><script>
 const CHECKOUTS = {
-  any: {
-    40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1'
-  },
-  double: {
-    40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1'
-  },
-  triple: {
-    60:'T20',57:'T19',54:'T18'
-  }
+  any: { 40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1' },
+  double: { 40:'D20',32:'D16',24:'D12',16:'D8',8:'D4',2:'D1' },
+  triple: { 60:'T20',57:'T19',54:'T18' }
 };
 
 let state;
