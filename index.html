@@ -11,10 +11,10 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .header strong{font-size:14px}
 
 /* SETUP */
-.setup{flex:1;padding:14px;overflow:hidden}
+.setup{flex:1;padding:14px;overflow-y:auto}
 .setup-card{background:#242424;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:12px}
 .setup-card h3{font-size:11px;color:#00ff88;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.setup label{font-size:12px;color:#ccc;display:block}
+.setup label{font-size:12px;color:#ccc;display:block;margin-top:8px}
 .setup input,.setup select{width:100%;padding:10px;margin-top:4px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px}
 
 .setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
@@ -64,11 +64,11 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
   <h3>Spel</h3>
   <div class="setup-grid">
     <div>
-      <label>Startpoäng</label>
+      <label for="mode">Startpoäng</label>
       <select id="mode"><option value="501">501</option><option value="301">301</option></select>
     </div>
     <div>
-      <label>Utgång</label>
+      <label for="finish">Utgång</label>
       <select id="finish"><option value="any">Valfri</option><option value="double">Dubbel</option><option value="triple">Trippel</option></select>
     </div>
   </div>
@@ -78,15 +78,15 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
   <h3>Matchformat</h3>
   <div class="setup-grid three">
     <div>
-      <label>Legs / set</label>
+      <label for="legsToWin">Legs / set</label>
       <input id="legsToWin" type="number" value="3" />
     </div>
     <div>
-      <label>Sets / match</label>
+      <label for="setsToWin">Sets / match</label>
       <input id="setsToWin" type="number" value="2" />
     </div>
     <div>
-      <label>Startspelare</label>
+      <label for="startPlayer">Startspelare</label>
       <select id="startPlayer"></select>
     </div>
   </div>
@@ -98,9 +98,9 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 
 <div class="setup-card">
   <h3>Spelare</h3>
-  <label>Antal spelare</label>
-  <select id="numPlayers" onchange="renderPlayerInputs()"><option>2</option><option>3</option><option>4</option></select>
-  <div id="playerInputs" style="margin-top:8px"></div>
+  <label for="numPlayers">Antal spelare</label>
+  <select id="numPlayers"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
+  <div id="playerInputs"></div>
 </div>
 
 <button class="submit" style="width:100%" onclick="startGame()">Starta match</button>
@@ -130,22 +130,68 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
       <button class="submit" onclick="submit()">OK</button>
     </div>
   </div>
-</div><!-- WIN MODAL --><div class="modal" id="winModal">
-  <div class="modal-content" id="winContent"></div>
-</div><script>
+</div><!-- WIN MODAL --><div class="modal" id="winModal"><div class="modal-content" id="winContent"></div></div><script>
 const CHECKOUTS={double:{170:'T20 T20 Bull',160:'T20 T20 D20',100:'T20 D20'},any:{},triple:{}};
-let state;
+let state=null;
 
-function renderPlayerInputs(){playerInputs.innerHTML='';startPlayer.innerHTML='';for(let i=1;i<=numPlayers.value;i++){playerInputs.innerHTML+=`<label>Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;startPlayer.innerHTML+=`<option value="${i-1}">Spelare ${i}</option>`}}
+function renderPlayerInputs(){
+  const container=document.getElementById('playerInputs');
+  const startSel=document.getElementById('startPlayer');
+  container.innerHTML='';
+  startSel.innerHTML='';
+  const n=+document.getElementById('numPlayers').value;
+  for(let i=1;i<=n;i++){
+    container.innerHTML+=`<label for="p${i}">Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;
+    startSel.innerHTML+=`<option value="${i-1}">Spelare ${i}</option>`;
+  }
+}
 
-function startGame(){state={start:+mode.value,finish:finish.value,legsToWin:+legsToWin.value,setsToWin:+setsToWin.value,leg:1,set:1,startIndex:+startPlayer.value,current:+startPlayer.value,alternate:alternateStart.checked,input:'',finished:false,players:Array.from({length:+numPlayers.value},(_,i)=>({name:document.getElementById(`p${i+1}`).value,score:+mode.value,legs:0,sets:0,rounds:[],setRounds:[],highest:0}))};save();setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}
+function startGame(){
+  const n=+numPlayers.value;
+  state={
+    start:+mode.value,
+    finish:finish.value,
+    legsToWin:+legsToWin.value,
+    setsToWin:+setsToWin.value,
+    leg:1,
+    set:1,
+    startIndex:+startPlayer.value,
+    current:+startPlayer.value,
+    alternate:alternateStart.checked,
+    input:'',
+    finished:false,
+    players:Array.from({length:n},(_,i)=>({
+      name:document.getElementById(`p${i+1}`).value,
+      score:+mode.value,
+      legs:0,
+      sets:0,
+      rounds:[],
+      setRounds:[],
+      highest:0
+    }))
+  };
+  save();
+  setup.classList.remove('active');
+  game.classList.add('active');
+  legsTarget.textContent=state.legsToWin;
+  setsTarget.textContent=state.setsToWin;
+  render();
+}
 
 function save(){localStorage.setItem('dartsState',JSON.stringify(state))}
 function load(){const s=localStorage.getItem('dartsState');if(s){state=JSON.parse(s);setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}}
 function resetAll(){localStorage.removeItem('dartsState');location.reload()}
 function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0}
 
-function render(){leg.textContent=state.leg;set.textContent=state.set;players.innerHTML='';state.players.forEach((p,i)=>{const co=CHECKOUTS[state.finish]?.[p.score];players.innerHTML+=`<div class="player ${i===state.current&&!state.finished?'active':'inactive'}"><div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div><div class="score">${p.score}</div><div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>${co?`<div class="checkout">Checkout: ${co}</div>`:''}</div>`})}
+function render(){
+  leg.textContent=state.leg;
+  set.textContent=state.set;
+  players.innerHTML='';
+  state.players.forEach((p,i)=>{
+    const co=CHECKOUTS[state.finish]?.[p.score];
+    players.innerHTML+=`<div class="player ${i===state.current&&!state.finished?'active':'inactive'}"><div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div><div class="score">${p.score}</div><div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>${co?`<div class="checkout">Checkout: ${co}</div>`:''}</div>`;
+  });
+}
 
 function num(n){if(state.finished)return;state.input=(state.input+n).slice(0,3);display.textContent=state.input}
 function back(){state.input=state.input.slice(0,-1);display.textContent=state.input||'0'}
@@ -153,69 +199,59 @@ function clearInput(){state.input='';display.textContent='0'}
 function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
 
 function submit(){
-  const v = +state.input;
-  if (!v || v > 180) return;
-  const p = state.players[state.current];
-
-  if (p.score - v < 0) {
-    next();
-    return;
-  }
-
-  if (p.score - v === 0 && !validFinish(v)) return;
-
-  p.score -= v;
+  const v=+state.input;
+  if(!v||v>180)return;
+  const p=state.players[state.current];
+  if(p.score-v<0){next();return}
+  if(p.score-v===0&&!validFinish(v))return;
+  p.score-=v;
   p.rounds.push(v);
   p.setRounds.push(v);
-  p.highest = Math.max(p.highest, v);
+  p.highest=Math.max(p.highest,v);
 
-  if (p.score === 0) {
-    // LEG WON
+  if(p.score===0){
     p.legs++;
+    state.players.forEach(pl=>pl.score=state.start);
 
-    // reset scores for new leg
-    state.players.forEach(pl => pl.score = state.start);
-
-    // advance leg counter WITHIN set
+    if(state.alternate){state.startIndex=(state.startIndex+1)%state.players.length}
+    state.current=state.startIndex;
     state.leg++;
 
-    // rotate start player correctly
-    if (state.alternate) {
-      state.startIndex = (state.startIndex + 1) % state.players.length;
-    }
-    state.current = state.startIndex;
-
-    // check set win
-    if (p.legs >= state.legsToWin) {
+    if(p.legs>=state.legsToWin){
       p.sets++;
+      state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});
       state.set++;
-
-      // reset legs + leg counter for new set
-      state.players.forEach(pl => {
-        pl.legs = 0;
-        pl.setRounds = [];
-      });
-      state.leg = 1;
-
-      // check match win
-      if (p.sets >= state.setsToWin) {
-        state.finished = true;
-        showWin(p);
-        return;
-      }
+      state.leg=1;
+      if(p.sets>=state.setsToWin){state.finished=true;showWin(p);return}
     }
   }
-
   next();
 }
-next()}
 
 function next(){state.current=(state.current+1)%state.players.length;clearInput();save();render()}
 
-function showWin(winner){let html=`<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;state.players.forEach(p=>{html+=`<div class="stat"><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</div>`});html+=`<button class="again" onclick="playAgain()">Spela igen</button><button class="exit" onclick="resetAll()">Ny match</button>`;winContent.innerHTML=html;winModal.classList.add('active');localStorage.removeItem('dartsState')}
+function showWin(winner){
+  let html=`<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;
+  state.players.forEach(p=>{html+=`<div class="stat"><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</div>`});
+  html+=`<button class="again" onclick="playAgain()">Spela igen</button><button class="exit" onclick="resetAll()">Ny match</button>`;
+  winContent.innerHTML=html;
+  winModal.classList.add('active');
+  localStorage.removeItem('dartsState');
+}
 
-function playAgain(){winModal.classList.remove('active');state.players.forEach(p=>{p.score=state.start;p.legs=0;p.sets=0;p.rounds=[];p.setRounds=[];p.highest=0});state.leg=1;state.set=1;state.finished=false;state.current=state.startIndex;save();render()}
+function playAgain(){
+  winModal.classList.remove('active');
+  state.players.forEach(p=>{p.score=state.start;p.legs=0;p.sets=0;p.rounds=[];p.setRounds=[];p.highest=0});
+  state.leg=1;
+  state.set=1;
+  state.finished=false;
+  state.current=state.startIndex;
+  save();
+  render();
+}
 
-renderPlayerInputs();load();
+renderPlayerInputs();
+document.getElementById('numPlayers').addEventListener('change',renderPlayerInputs);
+load();
 </script></body>
 </html>
