@@ -13,41 +13,46 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .header strong{font-size:14px}
 
 /* SETUP */
-.setup{flex:1;padding:14px;overflow-y:auto}
-.setup-card{background:#242424;border:1px solid #333;border-radius:12px;padding:14px;margin-bottom:12px}
-.setup-card h3{font-size:11px;color:#00ff88;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px}
-.setup label{font-size:12px;color:#ccc;display:block;margin-top:8px}
-.setup input,.setup select{width:100%;padding:10px;margin-top:4px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px}
+.setup{flex:1;padding:12px;overflow-y:auto;display:flex;flex-direction:column}
+.setup-content{flex:1;overflow-y:auto}
+.setup-card{background:#242424;border:1px solid #333;border-radius:10px;padding:12px;margin-bottom:10px}
+.setup-card h3{font-size:11px;color:#00ff88;margin-bottom:8px;text-transform:uppercase;letter-spacing:.5px}
+.setup label{font-size:12px;color:#ccc;display:block;margin-top:6px}
+.setup input,.setup select{width:100%;padding:9px;margin-top:4px;background:#1a1a1a;border:1px solid #333;color:#fff;border-radius:6px;font-size:14px}
 
-.setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.setup-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .setup-grid.three{grid-template-columns:repeat(3,1fr)}
 
-.toggle{display:flex;align-items:center;gap:10px;margin-top:10px;font-size:13px;color:#ccc}
+.toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-size:12px;color:#ccc}
 .toggle input{width:auto}
+
+.start-button{width:100%;padding:16px;margin-top:12px;background:#00ff88;color:#000;border:none;border-radius:10px;font-size:18px;font-weight:800;cursor:pointer;flex-shrink:0}
 
 /* GAME */
 .match-info{display:flex;gap:14px;font-size:12px}
 .match-info strong{color:#00ff88}
-.players{flex:1;display:flex;flex-direction:column}
-.player{flex:1;padding:10px 14px;background:#242424;border-bottom:1px solid #1a1a1a;display:flex;flex-direction:column;justify-content:center}
+.players{flex:1;display:flex;flex-direction:column;min-height:0;overflow-y:auto}
+.player{padding:12px 14px;background:#242424;border-bottom:1px solid #1a1a1a;display:flex;flex-direction:column;justify-content:center;flex-shrink:0}
 .player.active{background:#2b2b2b;border-left:4px solid #00ff88}
 .player.inactive{opacity:.45}
-.player-header{display:flex;justify-content:space-between;font-size:12px}
-.record{display:flex;gap:10px;font-size:11px;color:#ccc}
-.score{text-align:center;font-size:56px;font-weight:900;line-height:1;margin:4px 0}
+.player-header{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.record{display:flex;gap:8px;font-size:10px;color:#ccc}
+.score{text-align:center;font-size:48px;font-weight:900;line-height:1;margin:4px 0}
 .player.active .score{color:#00ff88}
-.stats{display:flex;justify-content:center;gap:16px;font-size:11px;color:#aaa}
-.checkout{text-align:center;font-size:11px;color:#ffc107;margin-top:4px}
+.stats{display:flex;justify-content:center;gap:14px;font-size:10px;color:#aaa;margin-top:3px}
+.checkout{text-align:center;font-size:10px;color:#ffc107;margin-top:3px}
 
-.input{background:#1a1a1a;border-top:2px solid #00ff88;padding:12px}
-.display{background:#242424;border:2px solid #333;border-radius:8px;height:56px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#00ff88;margin-bottom:8px}
+.input{background:#1a1a1a;border-top:2px solid #00ff88;padding:8px;display:flex;flex-direction:column;flex-shrink:0}
+.display{background:#242424;border:2px solid #333;border-radius:6px;height:44px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:900;color:#00ff88;margin-bottom:6px}
 .display.error{border-color:#dc3545;color:#dc3545}
-.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:80px}
-.pad button{padding:14px;font-size:18px;font-weight:700;background:#242424;color:#fff;border:1px solid #333;border-radius:6px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-bottom:6px}
+.pad button{padding:0;font-size:17px;font-weight:700;background:#242424;color:#fff;border:1px solid #333;border-radius:5px;height:44px;display:flex;align-items:center;justify-content:center}
 .pad button.zero{grid-column:span 2}
-.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;position:sticky;bottom:0;background:#1a1a1a;padding-bottom:env(safe-area-inset-bottom)}
-.actions button{padding:14px;font-weight:800;border-radius:6px;border:none}
+.actions{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;background:#1a1a1a;padding-bottom:max(8px, env(safe-area-inset-bottom))}
+.actions button{padding:0;font-weight:800;border-radius:5px;border:none;height:44px;font-size:13px;display:flex;align-items:center;justify-content:center}
 .clear{background:#dc3545;color:#fff}
+.undo{background:#ffc107;color:#000}
+.undo:disabled{background:#333;color:#666;cursor:not-allowed}
 .submit{background:#00ff88;color:#000}
 
 /* WIN MODAL */
@@ -154,6 +159,7 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
     </div>
     <div class="actions">
       <button class="clear" onclick="clearInput()">Rensa</button>
+      <button class="undo" id="undoBtn" onclick="undo()" disabled>Ångra</button>
       <button class="submit" onclick="submit()">OK</button>
     </div>
   </div>
@@ -166,9 +172,260 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 
 <script>
 const CHECKOUTS = {
-  double: {170:'T20 T20 Bull', 160:'T20 T20 D20', 100:'T20 D20'},
-  any: {},
-  triple: {}
+  double: {
+    170: 'T20 T20 Bull',
+    167: 'T20 T19 Bull',
+    164: 'T20 T18 Bull',
+    161: 'T20 T17 Bull',
+    160: 'T20 T20 D20',
+    158: 'T20 T20 D19',
+    157: 'T20 T19 D20',
+    156: 'T20 T20 D18',
+    155: 'T20 T19 D19',
+    154: 'T20 T18 D20',
+    153: 'T20 T19 D18',
+    152: 'T20 T20 D16',
+    151: 'T20 T17 D20',
+    150: 'T20 T18 D18',
+    149: 'T20 T19 D16',
+    148: 'T20 T16 D20',
+    147: 'T20 T17 D18',
+    146: 'T20 T18 D16',
+    145: 'T20 T15 D20',
+    144: 'T20 T20 D12',
+    143: 'T20 T17 D16',
+    142: 'T20 T14 D20',
+    141: 'T20 T19 D12',
+    140: 'T20 T16 D16',
+    139: 'T20 T13 D20',
+    138: 'T20 T18 D12',
+    137: 'T20 T15 D16',
+    136: 'T20 T20 D8',
+    135: 'T20 T17 D12',
+    134: 'T20 T14 D16',
+    133: 'T20 T19 D8',
+    132: 'T20 T16 D12',
+    131: 'T20 T13 D16',
+    130: 'T20 T18 D8',
+    129: 'T19 T16 D12',
+    128: 'T18 T14 D16',
+    127: 'T20 T17 D8',
+    126: 'T19 T19 D6',
+    125: 'T18 T13 D16',
+    124: 'T20 T16 D8',
+    123: 'T19 T16 D9',
+    122: 'T18 T18 D7',
+    121: 'T17 T10 D20',
+    120: 'T20 20 D20',
+    119: 'T19 T12 D13',
+    118: 'T20 18 D20',
+    117: 'T20 17 D20',
+    116: 'T20 16 D20',
+    115: 'T19 18 D20',
+    114: 'T20 14 D20',
+    113: 'T19 16 D20',
+    112: 'T20 12 D20',
+    111: 'T19 14 D20',
+    110: 'T20 10 D20',
+    109: 'T20 9 D20',
+    108: 'T20 8 D20',
+    107: 'T19 10 D20',
+    106: 'T20 6 D20',
+    105: 'T19 8 D20',
+    104: 'T20 4 D20',
+    103: 'T19 6 D20',
+    102: 'T20 2 D20',
+    101: 'T17 10 D20',
+    100: 'T20 D20',
+    99: 'T19 10 D16',
+    98: 'T20 D19',
+    97: 'T19 D20',
+    96: 'T20 D18',
+    95: 'T19 D19',
+    94: 'T18 D20',
+    93: 'T19 D18',
+    92: 'T20 D16',
+    91: 'T17 D20',
+    90: 'T18 D18',
+    89: 'T19 D16',
+    88: 'T16 D20',
+    87: 'T17 D18',
+    86: 'T18 D16',
+    85: 'T15 D20',
+    84: 'T20 D12',
+    83: 'T17 D16',
+    82: 'T14 D20',
+    81: 'T19 D12',
+    80: 'T20 D10',
+    79: 'T19 D11',
+    78: 'T18 D12',
+    77: 'T15 D16',
+    76: 'T20 D8',
+    75: 'T17 D12',
+    74: 'T14 D16',
+    73: 'T19 D8',
+    72: 'T16 D12',
+    71: 'T13 D16',
+    70: 'T18 D8',
+    69: 'T19 D6',
+    68: 'T20 D4',
+    67: 'T17 D8',
+    66: 'T10 D18',
+    65: 'T15 D10',
+    64: 'T16 D8',
+    63: 'T13 D12',
+    62: 'T10 D16',
+    61: 'T15 D8',
+    60: '20 D20',
+    59: '19 D20',
+    58: '18 D20',
+    57: '17 D20',
+    56: '16 D20',
+    55: '15 D20',
+    54: '14 D20',
+    53: '13 D20',
+    52: '12 D20',
+    51: '11 D20',
+    50: '10 D20',
+    49: '9 D20',
+    48: '8 D20',
+    47: '7 D20',
+    46: '6 D20',
+    45: '5 D20',
+    44: '4 D20',
+    43: '3 D20',
+    42: '2 D20',
+    41: '9 D16',
+    40: 'D20',
+    39: '7 D16',
+    38: 'D19',
+    37: '5 D16',
+    36: 'D18',
+    35: '3 D16',
+    34: 'D17',
+    33: '1 D16',
+    32: 'D16',
+    30: 'D15',
+    28: 'D14',
+    27: '19 D4',
+    26: 'D13',
+    25: '9 D8',
+    24: 'D12',
+    22: 'D11',
+    21: '5 D8',
+    20: 'D10',
+    18: 'D9',
+    16: 'D8',
+    14: 'D7',
+    12: 'D6',
+    10: 'D5',
+    8: 'D4',
+    6: 'D3',
+    4: 'D2',
+    2: 'D1'
+  },
+  any: {
+    180: 'T20 T20 T20',
+    177: 'T20 T19 T20',
+    174: 'T20 T20 T18',
+    171: 'T20 T19 T18',
+    170: 'T20 T20 Bull',
+    168: 'T20 T20 T16',
+    167: 'T20 T19 Bull',
+    165: 'T20 T19 T16',
+    164: 'T20 T18 Bull',
+    162: 'T20 T20 T14',
+    161: 'T20 T17 Bull',
+    160: 'T20 T20 D20',
+    159: 'T20 T19 T14',
+    158: 'T20 T20 D19',
+    157: 'T20 T19 D20',
+    156: 'T20 T20 D18',
+    155: 'T20 T19 D19',
+    154: 'T20 T18 D20',
+    153: 'T20 T19 D18',
+    152: 'T20 T20 D16',
+    151: 'T20 T17 D20',
+    150: 'T20 T18 D18',
+    100: 'T20 D20',
+    99: 'T20 19 D11',
+    98: 'T20 D19',
+    97: 'T19 D20',
+    96: 'T20 D18',
+    95: 'T19 D19',
+    94: 'T18 D20',
+    93: 'T19 D18',
+    92: 'T20 D16',
+    91: 'T17 D20',
+    90: 'T18 D18',
+    50: 'Bull',
+    40: 'D20',
+    32: 'D16',
+    20: 'D10',
+    10: 'D5'
+  },
+  triple: {
+    180: 'T20 T20 T20',
+    177: 'T20 T19 T20',
+    174: 'T20 T20 T18',
+    171: 'T20 T19 T18',
+    168: 'T20 T20 T16',
+    165: 'T20 T19 T16',
+    162: 'T20 T20 T14',
+    159: 'T20 T19 T14',
+    156: 'T20 T20 T12',
+    153: 'T20 T19 T12',
+    150: 'T20 T20 T10',
+    147: 'T20 T19 T10',
+    144: 'T20 T20 T8',
+    141: 'T20 T19 T8',
+    138: 'T20 T20 T6',
+    135: 'T20 T19 T6',
+    132: 'T20 T20 T4',
+    129: 'T20 T19 T4',
+    126: 'T20 T20 T2',
+    123: 'T20 T19 T2',
+    120: 'T20 T20 20',
+    117: 'T20 T19 20',
+    114: 'T20 T18 20',
+    111: 'T20 T17 20',
+    108: 'T20 T16 20',
+    105: 'T20 T15 20',
+    102: 'T20 T14 20',
+    99: 'T20 T13 20',
+    96: 'T20 T12 20',
+    93: 'T20 T11 20',
+    90: 'T20 T10 20',
+    87: 'T20 T9 20',
+    84: 'T20 T8 20',
+    81: 'T20 T7 20',
+    78: 'T20 T6 20',
+    75: 'T20 T5 20',
+    72: 'T20 T4 20',
+    69: 'T20 T3 20',
+    66: 'T20 T2 20',
+    63: 'T20 T1 20',
+    60: 'T20 20 20',
+    57: 'T19 20 20',
+    54: 'T18 20 20',
+    51: 'T17 20 20',
+    48: 'T16 20 20',
+    45: 'T15 20 20',
+    42: 'T14 20 20',
+    39: 'T13 20 20',
+    36: 'T12 20 20',
+    33: 'T11 20 20',
+    30: 'T10 20 20',
+    27: 'T9 20 20',
+    24: 'T8 20 20',
+    21: 'T7 20 20',
+    18: 'T6 20 20',
+    15: 'T5 20 20',
+    12: 'T4 20 20',
+    9: 'T3 20 20',
+    6: 'T2 20 20',
+    3: 'T1 20 20'
+  }
 };
 let state = null;
 
@@ -198,6 +455,7 @@ function startGame() {
     alternate: alternateStart.checked,
     input: '',
     finished: false,
+    history: [],
     players: Array.from({length: n}, (_, i) => ({
       name: document.getElementById(`p${i+1}`).value,
       score: +mode.value,
@@ -224,6 +482,7 @@ function load() {
   const s = localStorage.getItem('dartsState');
   if (s) {
     state = JSON.parse(s);
+    if (!state.history) state.history = []; // Ensure history exists
     setup.classList.remove('active');
     game.classList.add('active');
     legsTarget.textContent = state.legsToWin;
@@ -261,6 +520,14 @@ function render() {
         ${co ? `<div class="checkout">Checkout: ${co}</div>` : ''}
       </div>`;
   });
+  
+  // Update undo button state
+  const undoBtn = document.getElementById('undoBtn');
+  if (undoBtn) {
+    const canUndo = state.history && state.history.length > 0 && !state.finished;
+    undoBtn.disabled = !canUndo;
+    console.log('Undo button state:', canUndo, 'History length:', state.history?.length || 0);
+  }
 }
 
 function num(n) {
@@ -303,6 +570,8 @@ function submit() {
   if (p.score - v < 0) {
     display.classList.add('error');
     setTimeout(() => {
+      // Save to history even on bust so we can undo the bust
+      saveToHistory();
       next();
     }, 500);
     return;
@@ -312,10 +581,15 @@ function submit() {
   if (p.score - v === 0 && !validFinish(v)) {
     display.classList.add('error');
     setTimeout(() => {
+      // Save to history even on bust so we can undo the bust
+      saveToHistory();
       next();
     }, 500);
     return;
   }
+
+  // Save state to history before making changes
+  saveToHistory();
 
   // Valid score
   p.score -= v;
@@ -378,6 +652,63 @@ function next() {
   render();
 }
 
+function saveToHistory() {
+  // Deep clone the current state
+  const snapshot = {
+    players: state.players.map(p => ({
+      score: p.score,
+      legs: p.legs,
+      sets: p.sets,
+      rounds: [...p.rounds],
+      setRounds: [...p.setRounds],
+      highest: p.highest
+    })),
+    current: state.current,
+    leg: state.leg,
+    set: state.set,
+    startIndex: state.startIndex
+  };
+  
+  // Keep only last 20 moves to save memory
+  if (!state.history) state.history = [];
+  state.history.push(snapshot);
+  if (state.history.length > 20) {
+    state.history.shift();
+  }
+  console.log('Saved to history, length now:', state.history.length);
+}
+
+function undo() {
+  console.log('Undo called, history:', state.history);
+  if (!state.history || state.history.length === 0 || state.finished) {
+    console.log('Cannot undo - no history or game finished');
+    return;
+  }
+  
+  const snapshot = state.history.pop();
+  console.log('Restoring snapshot:', snapshot);
+  
+  // Restore state
+  state.players.forEach((p, i) => {
+    p.score = snapshot.players[i].score;
+    p.legs = snapshot.players[i].legs;
+    p.sets = snapshot.players[i].sets;
+    p.rounds = [...snapshot.players[i].rounds];
+    p.setRounds = [...snapshot.players[i].setRounds];
+    p.highest = snapshot.players[i].highest;
+  });
+  
+  state.current = snapshot.current;
+  state.leg = snapshot.leg;
+  state.set = snapshot.set;
+  state.startIndex = snapshot.startIndex;
+  
+  clearInput();
+  save();
+  render();
+  console.log('Undo complete, new history length:', state.history.length);
+}
+
 function showWin(winner) {
   let html = `<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;
   state.players.forEach(p => {
@@ -403,6 +734,7 @@ function playAgain() {
   state.set = 1;
   state.finished = false;
   state.current = state.startIndex;
+  state.history = [];
   save();
   render();
 }
