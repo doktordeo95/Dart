@@ -1,8 +1,10 @@
-<!DOCTYPE html><html lang="sv">
+<!DOCTYPE html>
+<html lang="sv">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Darts Score Counter</title><style>
+<title>Darts Score Counter</title>
+<style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;background:#1a1a1a;color:#fff;height:100vh;overflow:hidden}
 .screen{height:100vh;display:none;flex-direction:column}
@@ -39,6 +41,7 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 
 .input{background:#1a1a1a;border-top:2px solid #00ff88;padding:12px}
 .display{background:#242424;border:2px solid #333;border-radius:8px;height:56px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:900;color:#00ff88;margin-bottom:8px}
+.display.error{border-color:#dc3545;color:#dc3545}
 .pad{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding-bottom:80px}
 .pad button{padding:14px;font-size:18px;font-weight:700;background:#242424;color:#fff;border:1px solid #333;border-radius:6px}
 .pad button.zero{grid-column:span 2}
@@ -57,56 +60,73 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
 .modal-content button{margin-top:14px;width:100%;padding:14px;border:none;border-radius:8px;font-size:16px;font-weight:800;cursor:pointer}
 .modal-content .again{background:#00ff88}
 .modal-content .exit{background:#242424;color:#fff;margin-top:8px}
-</style></head>
-<body><!-- SETUP --><div class="screen active" id="setup">
+</style>
+</head>
+<body>
+<!-- SETUP -->
+<div class="screen active" id="setup">
   <div class="header"><strong>🎯 Darts Score Counter</strong></div>
-  <div class="setup"><div class="setup-card">
-  <h3>Spel</h3>
-  <div class="setup-grid">
-    <div>
-      <label for="mode">Startpoäng</label>
-      <select id="mode"><option value="501">501</option><option value="301">301</option></select>
+  <div class="setup">
+    <div class="setup-card">
+      <h3>Spel</h3>
+      <div class="setup-grid">
+        <div>
+          <label for="mode">Startpoäng</label>
+          <select id="mode">
+            <option value="501">501</option>
+            <option value="301">301</option>
+          </select>
+        </div>
+        <div>
+          <label for="finish">Utgång</label>
+          <select id="finish">
+            <option value="any">Valfri</option>
+            <option value="double">Dubbel</option>
+            <option value="triple">Trippel</option>
+          </select>
+        </div>
+      </div>
     </div>
-    <div>
-      <label for="finish">Utgång</label>
-      <select id="finish"><option value="any">Valfri</option><option value="double">Dubbel</option><option value="triple">Trippel</option></select>
+
+    <div class="setup-card">
+      <h3>Matchformat</h3>
+      <div class="setup-grid three">
+        <div>
+          <label for="legsToWin">Legs / set</label>
+          <input id="legsToWin" type="number" value="3" min="1" />
+        </div>
+        <div>
+          <label for="setsToWin">Sets / match</label>
+          <input id="setsToWin" type="number" value="2" min="1" />
+        </div>
+        <div>
+          <label for="startPlayer">Startspelare</label>
+          <select id="startPlayer"></select>
+        </div>
+      </div>
+      <div class="toggle">
+        <input type="checkbox" id="alternateStart" checked />
+        <label for="alternateStart">Växla startspelare varje leg</label>
+      </div>
     </div>
+
+    <div class="setup-card">
+      <h3>Spelare</h3>
+      <label for="numPlayers">Antal spelare</label>
+      <select id="numPlayers">
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+      </select>
+      <div id="playerInputs"></div>
+    </div>
+
+    <button class="submit" style="width:100%" onclick="startGame()">Starta match</button>
   </div>
 </div>
 
-<div class="setup-card">
-  <h3>Matchformat</h3>
-  <div class="setup-grid three">
-    <div>
-      <label for="legsToWin">Legs / set</label>
-      <input id="legsToWin" type="number" value="3" />
-    </div>
-    <div>
-      <label for="setsToWin">Sets / match</label>
-      <input id="setsToWin" type="number" value="2" />
-    </div>
-    <div>
-      <label for="startPlayer">Startspelare</label>
-      <select id="startPlayer"></select>
-    </div>
-  </div>
-  <div class="toggle">
-    <input type="checkbox" id="alternateStart" checked />
-    <label for="alternateStart">Växla startspelare varje leg</label>
-  </div>
-</div>
-
-<div class="setup-card">
-  <h3>Spelare</h3>
-  <label for="numPlayers">Antal spelare</label>
-  <select id="numPlayers"><option value="2">2</option><option value="3">3</option><option value="4">4</option></select>
-  <div id="playerInputs"></div>
-</div>
-
-<button class="submit" style="width:100%" onclick="startGame()">Starta match</button>
-
-  </div>
-</div><!-- GAME --><div class="screen" id="game">
+<!-- GAME -->
+<div class="screen" id="game">
   <div class="header">
     <button onclick="resetAll()">←</button>
     <div class="match-info">
@@ -120,186 +140,281 @@ body{font-family:system-ui,-apple-system,BlinkMacSystemFont,sans-serif;backgroun
   <div class="input">
     <div class="display" id="display">0</div>
     <div class="pad">
-      <button onclick="num(1)">1</button><button onclick="num(2)">2</button><button onclick="num(3)">3</button>
-      <button onclick="num(4)">4</button><button onclick="num(5)">5</button><button onclick="num(6)">6</button>
-      <button onclick="num(7)">7</button><button onclick="num(8)">8</button><button onclick="num(9)">9</button>
-      <button class="zero" onclick="num(0)">0</button><button onclick="back()">⌫</button>
+      <button onclick="num(1)">1</button>
+      <button onclick="num(2)">2</button>
+      <button onclick="num(3)">3</button>
+      <button onclick="num(4)">4</button>
+      <button onclick="num(5)">5</button>
+      <button onclick="num(6)">6</button>
+      <button onclick="num(7)">7</button>
+      <button onclick="num(8)">8</button>
+      <button onclick="num(9)">9</button>
+      <button class="zero" onclick="num(0)">0</button>
+      <button onclick="back()">⌫</button>
     </div>
     <div class="actions">
       <button class="clear" onclick="clearInput()">Rensa</button>
       <button class="submit" onclick="submit()">OK</button>
     </div>
   </div>
-</div><!-- WIN MODAL --><div class="modal" id="winModal"><div class="modal-content" id="winContent"></div></div><script>
-const CHECKOUTS={double:{170:'T20 T20 Bull',160:'T20 T20 D20',100:'T20 D20'},any:{},triple:{}};
-let state=null;
+</div>
 
-function renderPlayerInputs(){
-  const container=document.getElementById('playerInputs');
-  const startSel=document.getElementById('startPlayer');
-  container.innerHTML='';
-  startSel.innerHTML='';
-  const n=+document.getElementById('numPlayers').value;
-  for(let i=1;i<=n;i++){
-    container.innerHTML+=`<label for="p${i}">Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;
-    startSel.innerHTML+=`<option value="${i-1}">Spelare ${i}</option>`;
+<!-- WIN MODAL -->
+<div class="modal" id="winModal">
+  <div class="modal-content" id="winContent"></div>
+</div>
+
+<script>
+const CHECKOUTS = {
+  double: {170:'T20 T20 Bull', 160:'T20 T20 D20', 100:'T20 D20'},
+  any: {},
+  triple: {}
+};
+let state = null;
+
+function renderPlayerInputs() {
+  const container = document.getElementById('playerInputs');
+  const startSel = document.getElementById('startPlayer');
+  container.innerHTML = '';
+  startSel.innerHTML = '';
+  const n = +document.getElementById('numPlayers').value;
+  for (let i = 1; i <= n; i++) {
+    container.innerHTML += `<label for="p${i}">Spelare ${i}</label><input id="p${i}" value="Spelare ${i}">`;
+    startSel.innerHTML += `<option value="${i-1}">Spelare ${i}</option>`;
   }
 }
 
-function startGame(){
-  const n=+numPlayers.value;
-  state={
-    start:+mode.value,
-    finish:finish.value,
-    legsToWin:+legsToWin.value,
-    setsToWin:+setsToWin.value,
-    leg:1,
-    set:1,
-    startIndex:+startPlayer.value,
-    current:+startPlayer.value,
-    alternate:alternateStart.checked,
-    input:'',
-    finished:false,
-    players:Array.from({length:n},(_,i)=>({
-      name:document.getElementById(`p${i+1}`).value,
-      score:+mode.value,
-      legs:0,
-      sets:0,
-      rounds:[],
-      setRounds:[],
-      highest:0
+function startGame() {
+  const n = +numPlayers.value;
+  state = {
+    start: +mode.value,
+    finish: finish.value,
+    legsToWin: +legsToWin.value,
+    setsToWin: +setsToWin.value,
+    leg: 1,
+    set: 1,
+    startIndex: +startPlayer.value,
+    current: +startPlayer.value,
+    alternate: alternateStart.checked,
+    input: '',
+    finished: false,
+    players: Array.from({length: n}, (_, i) => ({
+      name: document.getElementById(`p${i+1}`).value,
+      score: +mode.value,
+      legs: 0,
+      sets: 0,
+      rounds: [],
+      setRounds: [],
+      highest: 0
     }))
   };
   save();
   setup.classList.remove('active');
   game.classList.add('active');
-  legsTarget.textContent=state.legsToWin;
-  setsTarget.textContent=state.setsToWin;
+  legsTarget.textContent = state.legsToWin;
+  setsTarget.textContent = state.setsToWin;
   render();
 }
 
-function save(){localStorage.setItem('dartsState',JSON.stringify(state))}
-function load(){const s=localStorage.getItem('dartsState');if(s){state=JSON.parse(s);setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}}
-function resetAll(){
+function save() {
+  localStorage.setItem('dartsState', JSON.stringify(state));
+}
+
+function load() {
+  const s = localStorage.getItem('dartsState');
+  if (s) {
+    state = JSON.parse(s);
+    setup.classList.remove('active');
+    game.classList.add('active');
+    legsTarget.textContent = state.legsToWin;
+    setsTarget.textContent = state.setsToWin;
+    render();
+  }
+}
+
+function resetAll() {
   localStorage.removeItem('dartsState');
   state = null;
   game.classList.remove('active');
   setup.classList.add('active');
   initSetup();
 }
-function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0}
 
-function render(){
-  leg.textContent=state.leg;
-  set.textContent=state.set;
-  players.innerHTML='';
-  state.players.forEach((p,i)=>{
-    const co=CHECKOUTS[state.finish]?.[p.score];
-    players.innerHTML+=`<div class="player ${i===state.current&&!state.finished?'active':'inactive'}"><div class="player-header"><strong>${p.name}</strong><div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div></div><div class="score">${p.score}</div><div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>${co?`<div class="checkout">Checkout: ${co}</div>`:''}</div>`;
+function avg(a) {
+  return a.length ? Math.round(a.reduce((x, y) => x + y, 0) / a.length) : 0;
+}
+
+function render() {
+  leg.textContent = state.leg;
+  set.textContent = state.set;
+  players.innerHTML = '';
+  state.players.forEach((p, i) => {
+    const co = CHECKOUTS[state.finish]?.[p.score];
+    players.innerHTML += `
+      <div class="player ${i === state.current && !state.finished ? 'active' : 'inactive'}">
+        <div class="player-header">
+          <strong>${p.name}</strong>
+          <div class="record">Legs ${p.legs}/${state.legsToWin} Sets ${p.sets}/${state.setsToWin}</div>
+        </div>
+        <div class="score">${p.score}</div>
+        <div class="stats">AVG ${avg(p.rounds)} | SET ${avg(p.setRounds)}</div>
+        ${co ? `<div class="checkout">Checkout: ${co}</div>` : ''}
+      </div>`;
   });
 }
 
-function num(n){if(state.finished)return;state.input=(state.input+n).slice(0,3);display.textContent=state.input}
-function back(){state.input=state.input.slice(0,-1);display.textContent=state.input||'0'}
-function clearInput(){state.input='';display.textContent='0'}
-function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
+function num(n) {
+  if (state.finished) return;
+  state.input = (state.input + n).slice(0, 3);
+  display.textContent = state.input;
+  display.classList.remove('error');
+}
+
+function back() {
+  state.input = state.input.slice(0, -1);
+  display.textContent = state.input || '0';
+  display.classList.remove('error');
+}
+
+function clearInput() {
+  state.input = '';
+  display.textContent = '0';
+  display.classList.remove('error');
+}
+
+function validFinish(v) {
+  if (state.finish === 'any') return true;
+  if (state.finish === 'double') return v % 2 === 0;
+  if (state.finish === 'triple') return v % 3 === 0;
+}
 
 function submit() {
   const v = +state.input;
-  if (!v || v > 180) return;
+  
+  // Validate input
+  if (!v || v > 180) {
+    display.classList.add('error');
+    return;
+  }
 
   const p = state.players[state.current];
 
+  // Bust - score would go negative
   if (p.score - v < 0) {
-    next();
+    display.classList.add('error');
+    setTimeout(() => {
+      next();
+    }, 500);
     return;
   }
 
+  // Bust - score would be zero but finish is invalid
   if (p.score - v === 0 && !validFinish(v)) {
+    display.classList.add('error');
+    setTimeout(() => {
+      next();
+    }, 500);
     return;
   }
 
+  // Valid score
   p.score -= v;
   p.rounds.push(v);
   p.setRounds.push(v);
   p.highest = Math.max(p.highest, v);
 
+  // Check for leg win
   if (p.score === 0) {
-    // LEG WON
     p.legs++;
 
-    // reset scores for new leg
-    state.players.forEach(pl => pl.score = state.start);
-
-    // rotate start player ONCE
-    if (state.alternate) {
-      state.startIndex = (state.startIndex + 1) % state.players.length;
-    }
-
-    // set current player to new start player
-    state.current = state.startIndex;
-
-    // advance leg counter
-    state.leg++;
-
-    // check set win
+    // Check for set win
     if (p.legs >= state.legsToWin) {
       p.sets++;
+      
+      // Reset for new set
       state.players.forEach(pl => {
         pl.legs = 0;
         pl.setRounds = [];
+        pl.score = state.start;
       });
+      
       state.set++;
       state.leg = 1;
 
-      // check match win
+      // Check for match win
       if (p.sets >= state.setsToWin) {
         state.finished = true;
+        save();
+        render();
         showWin(p);
         return;
       }
+    } else {
+      // New leg, same set
+      state.players.forEach(pl => pl.score = state.start);
+      state.leg++;
     }
 
+    // Rotate start player if enabled
+    if (state.alternate) {
+      state.startIndex = (state.startIndex + 1) % state.players.length;
+    }
+    
+    state.current = state.startIndex;
     clearInput();
     save();
     render();
-    return; // IMPORTANT: stop here so next() is NOT called
+    return;
   }
 
-  // only rotate turn if leg was NOT won
+  // Normal turn - move to next player
   next();
 }
 
-function next()(){state.current=(state.current+1)%state.players.length;clearInput();save();render()}
-
-function showWin(winner){
-  let html=`<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;
-  state.players.forEach(p=>{html+=`<div class="stat"><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</div>`});
-  html+=`<button class="again" onclick="playAgain()">Spela igen</button><button class="exit" onclick="resetAll()">Ny match</button>`;
-  winContent.innerHTML=html;
-  winModal.classList.add('active');
-  localStorage.removeItem('dartsState');
-}
-
-function playAgain(){
-  winModal.classList.remove('active');
-  state.players.forEach(p=>{p.score=state.start;p.legs=0;p.sets=0;p.rounds=[];p.setRounds=[];p.highest=0});
-  state.leg=1;
-  state.set=1;
-  state.finished=false;
-  state.current=state.startIndex;
+function next() {
+  state.current = (state.current + 1) % state.players.length;
+  clearInput();
   save();
   render();
 }
 
-function initSetup(){
+function showWin(winner) {
+  let html = `<h2>🎉 Match slut!</h2><div class="winner">${winner.name} vinner</div>`;
+  state.players.forEach(p => {
+    html += `<div class="stat"><strong>${p.name}</strong><br>Snitt: ${avg(p.rounds)}<br>Högsta runda: ${p.highest}</div>`;
+  });
+  html += `<button class="again" onclick="playAgain()">Spela igen</button><button class="exit" onclick="resetAll()">Ny match</button>`;
+  winContent.innerHTML = html;
+  winModal.classList.add('active');
+  localStorage.removeItem('dartsState');
+}
+
+function playAgain() {
+  winModal.classList.remove('active');
+  state.players.forEach(p => {
+    p.score = state.start;
+    p.legs = 0;
+    p.sets = 0;
+    p.rounds = [];
+    p.setRounds = [];
+    p.highest = 0;
+  });
+  state.leg = 1;
+  state.set = 1;
+  state.finished = false;
+  state.current = state.startIndex;
+  save();
+  render();
+}
+
+function initSetup() {
   renderPlayerInputs();
 }
 
-document.getElementById('numPlayers')
-  .addEventListener('change', initSetup);
+document.getElementById('numPlayers').addEventListener('change', initSetup);
 
 initSetup();
 load();
-</script></body>
+</script>
+</body>
 </html>
