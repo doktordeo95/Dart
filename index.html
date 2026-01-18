@@ -180,7 +180,13 @@ function startGame(){
 
 function save(){localStorage.setItem('dartsState',JSON.stringify(state))}
 function load(){const s=localStorage.getItem('dartsState');if(s){state=JSON.parse(s);setup.classList.remove('active');game.classList.add('active');legsTarget.textContent=state.legsToWin;setsTarget.textContent=state.setsToWin;render()}}
-function resetAll(){localStorage.removeItem('dartsState');location.reload()}
+function resetAll(){
+  localStorage.removeItem('dartsState');
+  state = null;
+  game.classList.remove('active');
+  setup.classList.add('active');
+  initSetup();
+}
 function avg(a){return a.length?Math.round(a.reduce((x,y)=>x+y,0)/a.length):0}
 
 function render(){
@@ -286,8 +292,14 @@ function playAgain(){
   render();
 }
 
-renderPlayerInputs();
-document.getElementById('numPlayers').addEventListener('change',renderPlayerInputs);
+function initSetup(){
+  renderPlayerInputs();
+}
+
+document.getElementById('numPlayers')
+  .addEventListener('change', initSetup);
+
+initSetup();
 load();
 </script></body>
 </html>
