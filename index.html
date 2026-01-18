@@ -152,16 +152,61 @@ function back(){state.input=state.input.slice(0,-1);display.textContent=state.in
 function clearInput(){state.input='';display.textContent='0'}
 function validFinish(v){if(state.finish==='any')return true;if(state.finish==='double')return v%2===0;if(state.finish==='triple')return v%3===0}
 
-function submit(){const v=+state.input;if(!v||v>180)return;const p=state.players[state.current];if(p.score-v<0){next();return}if(p.score-v===0&&!validFinish(v))return;p.score-=v;p.rounds.push(v);p.setRounds.push(v);p.highest=Math.max(p.highest,v);
+function submit(){
+  const v = +state.input;
+  if (!v || v > 180) return;
+  const p = state.players[state.current];
 
-if(p.score===0){p.legs++;state.leg++;state.players.forEach(pl=>pl.score=state.start);
+  if (p.score - v < 0) {
+    next();
+    return;
+  }
 
-// korrekt startlogik: startspelare roterar oberoende av vinnare
-if(state.alternate){state.startIndex=(state.startIndex+1)%state.players.length;}
-state.current=state.startIndex;
+  if (p.score - v === 0 && !validFinish(v)) return;
 
-if(p.legs>=state.legsToWin){p.sets++;state.set++;state.players.forEach(pl=>{pl.legs=0;pl.setRounds=[]});
-if(p.sets>=state.setsToWin){state.finished=true;showWin(p);return}}
+  p.score -= v;
+  p.rounds.push(v);
+  p.setRounds.push(v);
+  p.highest = Math.max(p.highest, v);
+
+  if (p.score === 0) {
+    // LEG WON
+    p.legs++;
+
+    // reset scores for new leg
+    state.players.forEach(pl => pl.score = state.start);
+
+    // advance leg counter WITHIN set
+    state.leg++;
+
+    // rotate start player correctly
+    if (state.alternate) {
+      state.startIndex = (state.startIndex + 1) % state.players.length;
+    }
+    state.current = state.startIndex;
+
+    // check set win
+    if (p.legs >= state.legsToWin) {
+      p.sets++;
+      state.set++;
+
+      // reset legs + leg counter for new set
+      state.players.forEach(pl => {
+        pl.legs = 0;
+        pl.setRounds = [];
+      });
+      state.leg = 1;
+
+      // check match win
+      if (p.sets >= state.setsToWin) {
+        state.finished = true;
+        showWin(p);
+        return;
+      }
+    }
+  }
+
+  next();
 }
 next()}
 
